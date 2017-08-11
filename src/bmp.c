@@ -15,6 +15,8 @@ int bmp_list_num = 0;
 int find_bmp(char * bmp_path)
 {
 
+	bmp_list_num=0;
+	memset(bmp_list , 0 , sizeof(bmp_list));
 	//打开当前目录
 
 	DIR * dirp;
@@ -29,7 +31,6 @@ int find_bmp(char * bmp_path)
 	struct dirent *_dir_p;
 	while(1)
 	{
-
 	    _dir_p = readdir(dirp);
 	    if(_dir_p == NULL)
 	    {
@@ -104,7 +105,7 @@ int get_bmp_w_h(char * bmp_info_buff,unsigned int *w,unsigned int *h){
 	unsigned int _bmp_w = *(unsigned int *)(bmp_info_buff + 18);   //18 偏移到图片的宽度信息的偏移量
 	unsigned int _bmp_h = *(unsigned int *)(bmp_info_buff + 18 + 4); //4 偏移过bmp的宽度信息
 	
-	printf("get_bmp_w_h: w = %d, h = %d\n",_bmp_w, _bmp_h);
+	//printf("get_bmp_w_h: w = %d, h = %d\n",_bmp_w, _bmp_h);
 	
 	//4. 赋值给*w，以及*h
 	*w = _bmp_w;
