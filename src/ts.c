@@ -11,7 +11,7 @@ struct tsdev * init_ts()
 	return ts;
 }
 
-int pressure_count = 0;
+int ts_count = 0;
 
 int get_ts(int *x ,int *y)
 {
@@ -22,22 +22,17 @@ int get_ts(int *x ,int *y)
 
 	printf("x = %d, y = %d, pressure = %d\n", sample.x, sample.y, sample.pressure);
 
-	if(sample.pressure == 255)
-	{		
-		pressure_count++;
-		if (pressure_count == 3)
-		{	
+	if (sample.pressure == 255)
+	{
+		ts_count++;
+		if(ts_count == 3) 
+		{
 			*x = sample.x;
-			*y = sample.y;
-			pressure_count = 0;
+			*y=sample.y;
+			ts_count = 0;
+			printf("%d\n", sample.tv.tv_sec);
 			return -1;
 		}
-		//struct timeval	tv;
-	}
-	else
-	{
-		*x = 0;
-		*y = 0;
 	}
 	return 0;
 

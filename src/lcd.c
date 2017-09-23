@@ -55,17 +55,20 @@ int show_color(unsigned int rgb_hex)
 	return 0;
 }
 
-int show_bmp(char * bmp_path)
+unsigned int * buff_lcd = NULL;
+int fd_lcd ;
+
+int init_lcd()
 {
 	//打开设备文件/dev/fb0
-	int fd_lcd = open("/dev/fb0",O_RDWR);
+	fd_lcd = open("/dev/fb0",O_RDWR);
 	if(-1 == fd_lcd)
 	{
 		printf("open /dev/fb0 error!\n");
 		return -1;
 	}
 	//映射为内存mmap
-	unsigned int * buff_lcd = NULL;
+	
 	buff_lcd  = (unsigned int *)mmap(NULL,LCD_W * LCD_H * LCD_PIX_SIZE, PROT_WRITE, MAP_SHARED,\
 			fd_lcd, 0);
 	if(buff_lcd == MAP_FAILED)
@@ -73,11 +76,31 @@ int show_bmp(char * bmp_path)
 		printf("mmap error :errno = %d!\n",errno);
 		return -1;
 	}
+}
+
+int show_bmp(char * bmp_path)
+{
+	
 	//读取图片信息并写入
 	//unsigned int buff_lcd[LCD_W * LCD_H] = {0};
 	proc_bmp_800_480(bmp_path,buff_lcd);
-	proc_bmp_not_800_480("./ui/02.bmp",buff_lcd,0,200);//刷入小图信息
 
+	
+}
+
+int show_bmp_overlay( char *bmp_overlay_path, int x ,int y)
+{
+	
+	//读取图片信息并写入
+	//unsigned int buff_lcd[LCD_W * LCD_H] = {0};
+	proc_bmp_not_800_480(bmp_overlay_path,buff_lcd, x, y);//刷入小图信息
+	printf("show %s success\n", bmp_overlay_path );
+
+	
+}
+
+int close_lcd()
+{
 	//关闭/dev/fb0
 	munmap(buff_lcd,LCD_W * LCD_H * LCD_PIX_SIZE);
 	if(close(fd_lcd))

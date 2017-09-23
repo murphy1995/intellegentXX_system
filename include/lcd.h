@@ -13,4 +13,8 @@
 
 int show_color(unsigned int rgb_hex);
 int show_bmp(char * bmp_path);
+int show_bmp_overlay( char *bmp_overlay_path, int x ,int y);
+int init_lcd();
+int close_lcd();
+
 #endif

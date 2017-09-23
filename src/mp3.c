@@ -74,3 +74,11 @@ int continue_music(){
 	return 0;
 }
 
+int volume_ctrl_music(int volume){
+	char *com = "amixer cset numid=5,iface=MIXER,name='PCM Volume' ";
+	char commend[256];
+	sprintf(commend,"%s %d" ,com,volume);
+	printf("%s\n", commend);
+	system(commend);
+	return 0;
+}

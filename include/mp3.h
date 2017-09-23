@@ -12,6 +12,7 @@ int play_music(char * music_name);
 int stop_music();
 int pause_music();
 int continue_music();
+int volume_ctrl_music(int volume);
 
 #define MUSIC_FILE_NAME_LEN 25
 #define MUSIC_LIST_SIZE 10

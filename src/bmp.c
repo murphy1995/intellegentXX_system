@@ -144,17 +144,29 @@ int proc_bmp_not_800_480(char *bmp_path,unsigned int * lcd_buff,unsigned int x,u
 	}
 
 	//读取图片信息
+	int fill_zero_line = 4 - (bmp_w*BMP_PIX_SIZE % 4);
+	if (fill_zero_line == 4)
+	{
+		fill_zero_line = 0;
+	}
+
 	char buff[BMP_W_800 * BMP_H_480 * BMP_PIX_SIZE] = {0};
-	read(fd_bmp, buff,bmp_w * bmp_h * BMP_PIX_SIZE);
+	read(fd_bmp, buff,bmp_w * bmp_h * BMP_PIX_SIZE +bmp_h * fill_zero_line);
 
 	unsigned int _bmp_w = 0;
 	unsigned int _bmp_h = 0;
 	if(bmp_h + y > BMP_H_480){
 		_bmp_h = BMP_H_480 - y;
 	}
+	else{
+		_bmp_h = bmp_h;
+	}
 
 	if(bmp_w + x > BMP_W_800){
 		_bmp_w = BMP_W_800 - x;
+	}
+	else{
+		_bmp_w = bmp_w;
 	}
 	//4. 在对应的x，y坐标上刷入图片信息
 	int i = 0;
@@ -163,11 +175,17 @@ int proc_bmp_not_800_480(char *bmp_path,unsigned int * lcd_buff,unsigned int x,u
 	{
 		for(j = 0 ;j < _bmp_w; j++)
 		{
-			lcd_buff[(BMP_H_480-i-y-1)*BMP_W_800 + (BMP_W_800-j-x-1)] = 0x0 <<24 |buff[(i*bmp_w+j)*BMP_PIX_SIZE] << 0 | \
-							buff[(i*bmp_w+j)*BMP_PIX_SIZE + 1] <<8 | \
-										buff[(i*bmp_w+j)*BMP_PIX_SIZE + 2] << 16;
+			// lcd_buff[(BMP_H_480-i-y-1)*BMP_W_800 + (BMP_W_800-j-x-1)] = 0x0 <<24 |buff[(i*bmp_w+j)*BMP_PIX_SIZE +i*fill_zero_line] << 0 | \
+			// 				buff[(i*bmp_w+j)*BMP_PIX_SIZE +i*fill_zero_line+ 1] <<8 | \
+			// 							buff[(i*bmp_w+j)*BMP_PIX_SIZE +i*fill_zero_line+ 2] << 16;
+			lcd_buff[(_bmp_h - i+y)*BMP_W_800 + (j+x)] = 0x0 <<24 |buff[(i*bmp_w+j)*BMP_PIX_SIZE + i*fill_zero_line  ] << 0 | \
+										buff[(i*bmp_w+j)*BMP_PIX_SIZE + i*fill_zero_line + 1] <<8 | \
+										buff[(i*bmp_w+j)*BMP_PIX_SIZE + i*fill_zero_line + 2] << 16;
+			
 		}
 	}
+
+	printf("proc_bmp_not_800_480 success\n");
 	//5. 关闭图片
 	close(fd_bmp);
 
